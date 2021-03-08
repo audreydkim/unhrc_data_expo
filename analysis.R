@@ -3,6 +3,7 @@
 # Set up ------------------------------------------------------------------
 
 library(tidyverse)
+library(countrycode)
 
 all_data <- read.csv("query_data/population.csv", skip = 14)
 # If you have error with above^^ go to sessions>set working directory> 
@@ -31,6 +32,8 @@ country_of_interest <- "ESP" # Spain
 country_data <- data %>% 
   filter(Country.of.asylum..ISO. == country_of_interest)
 
+country_name <- countrycode(country_of_interest, origin = 'iso3c', destination = 'country.name') # Get "Spain" from "ESP"
+
 # High level questions ----------------------------------------------------
 
 # From how many countries do asylum seekers come from (into country of interest)?
@@ -48,4 +51,15 @@ top_10_countries <- country_data %>%
 # Map ---------------------------------------------------------------------
 
 shapefile <- map_data("world")
+
+library(countrycode)
+
+shapefile <- shapefile %>% 
+  mutate(Country.of.origin..ISO. = countrycode(region, origin = 'country.name', destination = 'iso3c')) %>% 
+  left_join(country_data, by = "Country.of.origin..ISO.")
+
+ggplot(data = shapefile) +
+  geom_polygon(mapping = aes(x = long, y = lat, group = group, fill = Asylum.seekers
+                             ))
+
 
