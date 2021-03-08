@@ -4,7 +4,6 @@
 
 library(tidyverse)
 library(countrycode)
-
 all_data <- read.csv("query_data/population.csv", skip = 14)
 # If you have error with above^^ go to sessions>set working directory> 
 # choose directory> choose your file
@@ -23,8 +22,7 @@ data <- all_data %>%
 # What if i wanted to know what the distinct countries are?
 distinct_countries <- data %>% 
   select(Country.of.origin) %>% 
-  distinct() %>% 
-  View()
+  distinct()
 
 # What if i want to know where asylums are coming from from a specific
 # country?
@@ -40,7 +38,8 @@ country_name <- countrycode(country_of_interest, origin = 'iso3c', destination =
 # From how many countries do asylum seekers come from (into country of interest)?
 num_countries <- nrow(country_data)
 
-country_data %>% 
+# How many people sought asylum in 2020
+num_people <- country_data %>% 
   summarize(total_people = sum(Asylum.seekers)) %>% 
   pull()
 
@@ -59,7 +58,7 @@ shapefile <- shapefile %>%
   left_join(country_data, by = "Country.of.origin..ISO.")
 
 # Create the map
-ggplot(data = shapefile) +
+map <- ggplot(data = shapefile) +
   geom_polygon(mapping = aes(x = long, y = lat, group = group, fill = Asylum.seekers)
                ) +
   labs(title = paste("Number of People Seeking Asylum in", country_name),

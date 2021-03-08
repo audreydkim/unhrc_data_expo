@@ -1,4 +1,20 @@
 ---
-title: "Report"
+title: "Asylum Seeker Report"
 output: html_document
 ---
+```{r include = F}
+source("analysis.R")
+```
+
+This is a report of people seeking asylum in `r country_name`. There were `r num_people` that sought asylum in 2020 from `r num_countries` countries. Here are the top countries:
+
+```{r, echo = F}
+library(knitr)
+kable(top_10_countries, col.names = c("Country", "Number Asylum Seekers"))
+```
+Below is a map of where people came from around the globe.
+
+```{r, echo = F}
+map
+```
+
