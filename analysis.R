@@ -15,6 +15,7 @@ unique(all_data$Year)
 length(unique(all_data$Country.of.origin))
 length(unique(all_data$Country.of.asylum))
 
+# Decided to look at only 2020 data
 data <- all_data %>% 
   filter(Year == 2020) %>% 
   select(contains("Country"), Asylum.seekers)
@@ -52,14 +53,17 @@ top_10_countries <- country_data %>%
 
 shapefile <- map_data("world")
 
-library(countrycode)
-
+# Get iso3 codes and join our data
 shapefile <- shapefile %>% 
   mutate(Country.of.origin..ISO. = countrycode(region, origin = 'country.name', destination = 'iso3c')) %>% 
   left_join(country_data, by = "Country.of.origin..ISO.")
 
+# Create the map
 ggplot(data = shapefile) +
-  geom_polygon(mapping = aes(x = long, y = lat, group = group, fill = Asylum.seekers
-                             ))
+  geom_polygon(mapping = aes(x = long, y = lat, group = group, fill = Asylum.seekers)
+               ) +
+  labs(title = paste("Number of People Seeking Asylum in", country_name),
+       x = "", y = "", fill = "Num. People") + 
+  theme_minimal()
 
 
